@@ -1,49 +1,42 @@
 package main
 
 import (
+	"gopkg.in/urfave/cli.v1"
+	"log"
 	"os"
-	"errors"
-	"git-profile/pkg/repo"
-	"git-profile/pkg/store"
 )
 
-type SetProfile struct {
-	name string
-	args []string
+type Cmd interface {
+	Parse(c *cli.Context) error
+	Run() error
 }
 
 func main() {
-	args, err := parseSetProfile()
-	if err != nil {
-		panic(err)
+	app := cli.NewApp()
+
+	app.Commands = []cli.Command {
+		{
+			Name: "set",
+			Action: Action(&SetProfile{}),
+			SkipFlagParsing: true,
+		},
 	}
 
-	r, err := repo.OpenCurrent()
+	err := app.Run(os.Args)
 	if err != nil {
-		panic(err)
-	}
-
-	s, err := store.NewStore(r)
-	if err != nil {
-		panic(err)
-	}
-
-	err = s.SetProfile(args.name, args.args)
-	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
 
-func parseSetProfile() (*SetProfile, error){
-	args := SetProfile{}
-	if len(os.Args) < 2 {
-		return nil, errors.New("please provide profile name")
-	}
-	args.name = os.Args[1]
+func Action(cmd Cmd) func(*cli.Context) error {
+	return func(ctx *cli.Context) error {
+		err := cmd.Parse(ctx)
+		if err != nil {
+			return err
+		}
 
-	if len(os.Args) > 2 {
-		args.args = os.Args[2:]
+		return cmd.Run()
 	}
-
-	return &args, nil
 }
+
+

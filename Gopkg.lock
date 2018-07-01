@@ -169,6 +169,12 @@
   version = "v4.4.1"
 
 [[projects]]
+  name = "gopkg.in/urfave/cli.v1"
+  packages = ["."]
+  revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
+  version = "v1.20.0"
+
+[[projects]]
   name = "gopkg.in/warnings.v0"
   packages = ["."]
   revision = "ec4a0fea49c7b46c2aeb0b51aac55779c607e52b"
@@ -177,6 +183,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "210ed2b264c9f73016cc26bdff868cb67026d7b7209e3be57d8d0a662e835ce1"
+  inputs-digest = "3757ae02ea74fa58cf8418bb87116505d16089b39ccf938adb39474116d5edd2"
   solver-name = "gps-cdcl"
   solver-version = 1
