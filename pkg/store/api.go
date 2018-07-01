@@ -1,9 +1,13 @@
 package store
 
-import "gopkg.in/src-d/go-git.v4"
+import (
+	"gopkg.in/src-d/go-git.v4"
+	"git-profile/pkg/repo"
+)
 
 type ProfileStore interface {
-	SetProfile(name string, args []string) error
+	AttachProfile(name string, args []string) error
+	DetachProfile(name string) error
 }
 
 func NewStore(r *git.Repository) (ProfileStore, error) {
@@ -13,4 +17,13 @@ func NewStore(r *git.Repository) (ProfileStore, error) {
 	}
 
 	return &gitConfigStore{repo: r, config: c}, nil
+}
+
+func NewStoreForCurrentRepo() (ProfileStore, error) {
+	r, err := repo.OpenCurrent()
+	if err != nil {
+		panic(err)
+	}
+
+	return NewStore(r)
 }

@@ -20,6 +20,10 @@ func main() {
 			Action: Action(&SetProfile{}),
 			SkipFlagParsing: true,
 		},
+		{
+			Name: "rm",
+			Action: Action(&RmProfile{}),
+		},
 	}
 
 	err := app.Run(os.Args)
