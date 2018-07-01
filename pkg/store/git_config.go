@@ -11,16 +11,28 @@ type gitConfigStore struct {
 	repo *git.Repository
 	config *config.Config
 }
+
+const (
+	sectionName = "profile"
+	argSeparator = " "
+)
+
 var _ ProfileStore = &gitConfigStore{}
 
-func (s *gitConfigStore) SetProfile(name string, args []string) error {
+func (s *gitConfigStore) AttachProfile(name string, args []string) error {
 	encArgs := ""
 	if args != nil {
-		encArgs = strings.Join(args, " ")
+		encArgs = strings.Join(args, argSeparator)
 	}
-	s.config.Raw = s.config.Raw.SetOption("profile", fmtConfig.NoSubsection, name, encArgs)
-	return s.repo.Storer.SetConfig(s.config)
+	s.config.Raw.SetOption(sectionName, fmtConfig.NoSubsection, name, encArgs)
+	return s.store()
 }
 
+func (s *gitConfigStore) DetachProfile(name string) error {
+	s.config.Raw.Section(sectionName).RemoveOption(name)
+	return s.store()
+}
 
-
+func (s *gitConfigStore) store() error {
+	return s.repo.Storer.SetConfig(s.config)
+}

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"gopkg.in/urfave/cli.v1"
 	"git-profile/pkg/store"
-	"git-profile/pkg/repo"
 )
 
 type SetProfile struct {
@@ -13,17 +12,12 @@ type SetProfile struct {
 }
 
 func (sp *SetProfile) Run() error {
-	r, err := repo.OpenCurrent()
+	s, err := store.NewStoreForCurrentRepo()
 	if err != nil {
 		panic(err)
 	}
 
-	s, err := store.NewStore(r)
-	if err != nil {
-		panic(err)
-	}
-
-	err = s.SetProfile(sp.name, sp.args)
+	err = s.AttachProfile(sp.name, sp.args)
 	if err != nil {
 		panic(err)
 	}
@@ -31,8 +25,8 @@ func (sp *SetProfile) Run() error {
 }
 
 func (sp *SetProfile) Parse(c *cli.Context) error {
-	if c.NArg() < 2 {
-		return errors.New("please provide profile name")
+	if c.NArg() < 1 {
+		return errors.New("missing NAME arg")
 	}
 	sp.name = c.Args().First()
 	sp.args = c.Args().Tail()
